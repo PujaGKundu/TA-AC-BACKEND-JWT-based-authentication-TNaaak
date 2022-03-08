@@ -1,6 +1,7 @@
 var mongoose = require("mongoose");
 var bcrypt = require("bcrypt");
 var Schema = mongoose.Schema;
+var jwt = require("jsonwebtoken");
 
 var userSchema = new Schema(
   {
@@ -25,6 +26,24 @@ userSchema.methods.verifyPassword = async function (password) {
   } catch (error) {
     return error;
   }
+};
+
+userSchema.methods.signToken = async function () {
+  var payload = { userId: this.id, email: this.email };
+  try {
+    var token = await jwt.sign(payload, "thisisasecret");
+    return token;
+  } catch (error) {
+    return error;
+  }
+};
+
+userSchema.methods.userJSON = function (token) {
+  return {
+    name: this.name,
+    email: this.email,
+    token: token,
+  };
 };
 
 module.exports = mongoose.model("User", userSchema);
