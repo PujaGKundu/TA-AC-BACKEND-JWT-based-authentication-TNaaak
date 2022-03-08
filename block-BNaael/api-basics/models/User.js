@@ -31,7 +31,7 @@ userSchema.methods.verifyPassword = async function (password) {
 userSchema.methods.signToken = async function () {
   var payload = { userId: this.id, email: this.email };
   try {
-    var token = await jwt.sign(payload, "thisisasecret");
+    var token = await jwt.sign(payload, process.env.SECRET);
     return token;
   } catch (error) {
     return error;
